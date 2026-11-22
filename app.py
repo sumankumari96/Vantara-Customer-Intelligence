@@ -1,9 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
 
 st.set_page_config(page_title="Vantara Customer Intelligence", page_icon="📊", layout="wide")
 
@@ -21,26 +18,27 @@ def load_data():
         'Spending_Score': np.random.randint(1, 100, num_customers),
         'Purchase_Frequency': np.random.randint(1, 20, num_customers)
     }
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+    
+    def assign_segment(row):
+        inc = row['Annual_Income_k']
+        score = row['Spending_Score']
+        if inc >= 70 and score >= 60:
+            return 'VIP / High-Value Targets'
+        elif inc >= 70 and score < 60:
+            return 'Careful High-Earners'
+        elif inc < 70 and score >= 60:
+            return 'Impulsive Spenders'
+        elif inc >= 40:
+            return 'Standard Customers'
+        else:
+            return 'Budget-Conscious Buyers'
+
+    df['Segment'] = df.apply(assign_segment, axis=1)
+    df['Loyalty_Index'] = (df['Spending_Score'] * 0.6 + df['Purchase_Frequency'] * 2).round(1)
+    return df
 
 df = load_data()
-
-features = df[['Annual_Income_k', 'Spending_Score']]
-scaler = StandardScaler()
-scaled_features = scaler.fit_transform(features)
-
-kmeans = KMeans(n_clusters=5, random_state=42, n_init=10)
-df['Cluster'] = kmeans.fit_predict(scaled_features)
-
-segment_map = {
-    0: 'Standard Customers',
-    1: 'VIP / High-Value Targets',
-    2: 'Careful High-Earners',
-    3: 'Impulsive Spenders',
-    4: 'Budget-Conscious Buyers'
-}
-df['Segment'] = df['Cluster'].map(segment_map)
-df['Loyalty_Index'] = (df['Spending_Score'] * 0.6 + df['Purchase_Frequency'] * 2).round(1)
 
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Total Customers", len(df))
@@ -54,17 +52,11 @@ left_col, right_col = st.columns(2)
 
 with left_col:
     st.subheader("🎯 AI Customer Segmentation Map")
-    fig = px.scatter(
-        df, x='Annual_Income_k', y='Spending_Score', color='Segment',
-        hover_data=['Customer_ID', 'Age', 'Loyalty_Index'],
-        title="Income vs. Spending Behavior"
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    st.scatter_chart(df, x='Annual_Income_k', y='Spending_Score', color='Segment')
 
 with right_col:
-    st.subheader("📈 Segment Distribution")
-    pie_fig = px.pie(df, names='Segment', hole=0.4)
-    st.plotly_chart(pie_fig, use_container_width=True)
+    st.subheader("📈 Customer Count by Segment")
+    st.bar_chart(df['Segment'].value_counts())
 
 st.divider()
 
@@ -75,20 +67,33 @@ in_income = st.sidebar.slider("Annual Income ($k)", 15, 140, 75)
 in_score = st.sidebar.slider("Spending Score (1-100)", 1, 100, 80)
 
 if st.sidebar.button("Predict Customer Segment"):
-    user_scaled = scaler.transform([[in_income, in_score]])
-    pred_cluster = kmeans.predict(user_scaled)[0]
-    pred_label = segment_map[pred_cluster]
-    
-    st.sidebar.success(f"**Category:** {pred_label}")
-    if pred_label == 'VIP / High-Value Targets':
-        st.sidebar.info("💡 **Strategy:** Offer exclusive loyalty rewards and VIP early access.")
-    elif pred_label == 'Careful High-Earners':
-        st.sidebar.info("💡 **Strategy:** Highlight premium product quality and value bundles.")
+    if in_income >= 70 and in_score >= 60:
+        pred_label = 'VIP / High-Value Targets'
+        strategy = "Offer exclusive loyalty rewards and VIP early access."
+    elif in_income >= 70 and in_score < 60:
+        pred_label = 'Careful High-Earners'
+        strategy = "Highlight premium product quality and value bundles."
+    elif in_income < 70 and in_score >= 60:
+        pred_label = 'Impulsive Spenders'
+        strategy = "Target with flash sales and trend-based promotions."
+    elif in_income >= 40:
+        pred_label = 'Standard Customers'
+        strategy = "Engage with regular newsletters and combo offers."
     else:
-        st.sidebar.info("💡 **Strategy:** Target with seasonal discounts and promotional coupons.")
+        pred_label = 'Budget-Conscious Buyers'
+        strategy = "Target with seasonal discounts and promotional coupons."
+        
+    st.sidebar.success(f"**Category:** {pred_label}")
+    st.sidebar.info(f"💡 **Strategy:** {strategy}")
 
 st.subheader("📋 Customer Intelligence Data Report")
 st.dataframe(df.head(15), use_container_width=True)
 
 csv = df.to_csv(index=False).encode('utf-8')
 st.download_button("⬇️ Download Full AI Report (CSV)", data=csv, file_name="vantara_customer_report.csv", mime="text/csv")
+
+    
+   
+
+
+       
