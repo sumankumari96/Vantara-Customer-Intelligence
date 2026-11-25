@@ -1,18 +1,18 @@
-# 📊 Vantara Customer Intelligence Platform
+# 📊 Vantara Retail Solutions – Customer Behavior Prediction Platform
 
-An interactive, AI-driven customer analytics and segmentation dashboard designed to help businesses understand customer purchasing behavior, measure loyalty, and predict customer segments in real time.
+An end-to-end Machine Learning & Analytics platform designed for **Vantara Retail Solutions** to predict **Customer Churn**, estimate **Customer Lifetime Value (CLV)**, perform **RFM Segmentation**, and provide **Explainable AI (XAI)** insights based on the **Online Retail II (UCI)** schema.
 
-## 🚀 Key Features
-- **Automated Customer Segmentation:** Uses unsupervised machine learning (**K-Means Clustering**) to group customers into 5 actionable segments (VIP Targets, Careful High-Earners, Impulsive Spenders, Standard, and Budget Buyers).
-- **Executive KPI Metrics:** Displays real-time business metrics including Total Customers, Average Annual Income, Average Spending Score, and VIP Customer count.
-- **Interactive Data Visualizations:** Dynamic scatter plots and distribution charts powered by **Plotly** for deep behavioral insights.
-- **Live AI Customer Predictor:** Allows business users to input a customer's annual income and spending score to instantly classify them and receive tailored marketing strategies.
-- **Exportable Intelligence Reports:** One-click CSV report download for offline business analysis.
+## 🎯 Core Capabilities (Aligned with PRD v1.0)
+- **RFM & Behavioral Feature Engineering:** Computes Recency, Frequency, Monetary Value, Average Basket Size, Return Rate, and Composite Engagement Score.
+- **Churn Risk Leaderboard:** Identifies high-value, high-churn-risk customers so retention teams can prioritize marketing spend.
+- **Customer Lifetime Value (CLV) Estimation:** Projects 12-month expected revenue per customer adjusted for retention probability.
+- **Business-Readable Segmentation:** Groups customers into actionable profiles (*VIP Champions*, *At-Risk High-Value*, *Loyal Frequent Buyers*, *Standard / Growth*, and *Lapsed / Churned*).
+- **Explainable AI (XAI) Panel:** Provides plain-language explanations for individual customer predictions searchable by `Customer ID`.
+- **Model Benchmarking & Live Simulator:** Compares XGBoost, LightGBM, Random Forest, ANN, and Logistic Regression metrics alongside a real-time What-If predictor.
 
 ## 🛠️ Tech Stack
-- **Language:** Python
-- **Frontend & Deployment:** Streamlit
-- **Machine Learning:** Scikit-Learn (StandardScaler, K-Means Clustering)
-- **Data Manipulation:** Pandas, NumPy
-- **Visualization:** Plotly Express
+- **Language:** Python 3.10+
+- **Data Processing:** Pandas, NumPy
+- **Modeling & Analytics:** Scikit-Learn, XGBoost, LightGBM, RFM Statistical Scoring
+- **Interactive Dashboard:** Streamlit
 -
